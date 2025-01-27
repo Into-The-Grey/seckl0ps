@@ -259,7 +259,7 @@ if [ ! -d "$PHONEINFOGA_DIR" ]; then
 
   echo "[DEBUG] Installing PhoneInfoga dependencies."
   (
-    cd "$PHONEINFOGA_DIR" || { echo "[ERROR] Failed to cd into PhoneInfoga. Exiting."; exit 1; }
+    cd "$PHONEINFOGA_DIR" || { echo "[ERROR] Failed to change directory to $PHONEINFOGA_DIR. Exiting."; exit 1; }
     sudo pip3 install --target="${PHONEINFOGA_DIR}" -r requirements.txt
   )
   echo "[DEBUG] PhoneInfoga setup completed successfully."
@@ -292,7 +292,9 @@ fi
 if [ -d "tests" ]; then
   echo "[DEBUG] Tests directory found, running tests..."
   progress_bar 2 "Testing seckl0ps environment"
-  if ! python3 -m unittest discover tests; then
+  if ! command -v python3 &>/dev/null; then
+    echo "[ERROR] python3 is not installed or not available in the PATH. Skipping tests."
+  elif ! python3 -m unittest discover tests; then
     echo "[ERROR] Some tests failed. Check the logs for details."
     # Not exiting here so user can decide to continue using the tool or fix tests
   fi
@@ -310,8 +312,9 @@ sudo apt clean
 
 ###############################################################################
 # Completion
-###############################################################################
 SCRIPT_END_TIME=$(date)
 echo "All dependencies installed successfully! Ready to use seckl0ps."
+echo "To start using seckl0ps, run the following command:"
+echo "  ./seckl0ps.sh"
 echo "[DEBUG] Installation script completed at $SCRIPT_END_TIME"
 echo "[INFO] For detailed logs, check $LOG_FILE"
