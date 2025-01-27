@@ -1,6 +1,26 @@
 #!/bin/bash
 
 # Install.sh - Installation script for seckl0ps dependencies
+#
+# This script installs all necessary system and Python dependencies required for seckl0ps.
+# It performs the following steps:
+# 1. Checks for root privileges.
+# 2. Updates and upgrades the system package list.
+# 3. Installs essential system tools (curl, whois, traceroute, nmap, wireshark, python3-pip, git).
+# 4. Installs Python dependencies listed in requirements.txt.
+# 5. Clones and sets up the PhoneInfoga tool.
+#
+# Usage:
+#   sudo ./install.sh
+#
+# Ensure that the script is run from the directory containing the requirements.txt file.
+# The script must be executed with root privileges.
+
+# Check for root privileges
+if [ "$EUID" -ne 0 ]; then
+  echo "[ERROR] Please run as root or use sudo."
+  exit 1
+fi
 
 set -e  # Exit immediately if a command exits with a non-zero status
 
@@ -67,7 +87,7 @@ if [ ! -r "requirements.txt" ]; then
   exit 1
 fi
 echo "[DEBUG] Running: pip3 install --target=${TOOLS_DIR} -r requirements.txt"
-pip3 install --target="${TOOLS_DIR}" -r requirements.txt
+sudo pip3 install --target="${TOOLS_DIR}" -r requirements.txt
 if [ $? -eq 0 ]; then
   echo "[DEBUG] Installed Python packages:" > "${TOOLS_DIR}/python_packages.log"
   pip3 freeze >> "${TOOLS_DIR}/python_packages.log"
@@ -86,7 +106,7 @@ if [ ! -d "${TOOLS_DIR}/PhoneInfoga" ]; then
   echo "[DEBUG] Directory does not exist. Checking existence of tools directory."
   if [ ! -d "${TOOLS_DIR}" ]; then
     echo "[DEBUG] Tools directory does not exist. Creating tools directory."
-    mkdir -p "${TOOLS_DIR}"
+    sudo mkdir -p "${TOOLS_DIR}"
   fi
   echo "[DEBUG] Checking write permissions for tools directory."
   if [ ! -w "${TOOLS_DIR}" ]; then
@@ -98,13 +118,13 @@ if [ ! -d "${TOOLS_DIR}/PhoneInfoga" ]; then
     echo "[ERROR] Network is unreachable. Please check your internet connection. Exiting."
     exit 1
   fi
-  echo "[DEBUG] Cloning PhoneInfoga repository into ${TOOLS_DIR}/PhoneInfoga"
-  git clone https://github.com/sundowndev/PhoneInfoga.git "${TOOLS_DIR}/PhoneInfoga"
+  echo "[DEBUG] Cloning PhoneInfoga repository into ${TOOLS_DIR}/PhoneInfoga with sudo"
+  sudo git clone https://github.com/sundowndev/PhoneInfoga.git "${TOOLS_DIR}/PhoneInfoga"
   echo "[DEBUG] Cloned PhoneInfoga repository. Navigating to directory."
-  cd "${TOOLS_DIR}/PhoneInfoga"
+  sudo bash -c "cd '${TOOLS_DIR}/PhoneInfoga'" || { echo "[ERROR] Failed to change directory to ${TOOLS_DIR}/PhoneInfoga. Exiting."; exit 1; }
   echo "[DEBUG] Installing PhoneInfoga dependencies."
-  pip3 install --target="${TOOLS_DIR}/PhoneInfoga" -r requirements.txt
-  cd ../../
+  sudo pip3 install --target="${TOOLS_DIR}/PhoneInfoga" -r requirements.txt
+  sudo bash -c "cd ../.." || { echo "[ERROR] Failed to change directory back. Exiting."; exit 1; }
   echo "[DEBUG] PhoneInfoga setup completed successfully."
 else
   echo "PhoneInfoga already installed. Skipping..."
