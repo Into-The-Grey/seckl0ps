@@ -28,7 +28,9 @@ Welcome to the **Tools List** for `seckl0ps`. Below is a comprehensive overview 
       - [**Chkrootkit**](#chkrootkit)
       - [**Lynis**](#lynis)
   - [Placeholder Categories](#placeholder-categories)
-    - [Submit a Suggestion](#submit-a-suggestion)
+    - [Placeholder Subcategory](#placeholder-subcategory)
+      - [Placeholder Tool](#placeholder-tool)
+  - [Submit a Suggestion](#submit-a-suggestion)
 
 ---
 
@@ -140,7 +142,13 @@ Welcome to the **Tools List** for `seckl0ps`. Below is a comprehensive overview 
 
 ## Placeholder Categories
 
-### Submit a Suggestion
+### Placeholder Subcategory
+
+#### Placeholder Tool
+
+---
+
+## Submit a Suggestion
 
 - Have an idea for a category or tool that fits here? Submit a feature suggestion to help expand the list!
 
